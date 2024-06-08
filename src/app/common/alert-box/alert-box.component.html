@@ -1,0 +1,17 @@
+<div class="modal-wrapper" [ngClass]="{'show': showModal}" role="dialog" aria-labelledby="modalTitle" aria-modal="true" *ngIf="showModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">{{ title }}</h2> 
+            <button class="close-btn" (click)="closeModal()" aria-label="Close modal" tabindex="0">×</button>
+        </div>
+        <div class="modal-body">
+             <!-- Projection of dynamic content inside the modal body -->
+            <ng-content></ng-content>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" (click)="closeModal()" tabindex="0">Cancel</button>
+            <button class="btn-primary" tabindex="0">{{ buttonTitle }}</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="showModal" class="backdrop" (click)="closeModal()"></div>

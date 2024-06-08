@@ -1,0 +1,12 @@
+<h4><u>{{CONSTANTS.IMPLEMENTATION2}}</u></h4>
+<ui-grid *ngIf="deviceDetails" [columns]="columns" [data]="deviceDetails" [tableConfig]="tableConfig"
+    (selectedRowsEvent)="selectedRows($event)" [attr.aria-label]="ARIA_CONSTANTS.DEVICE_DETAILS_TABLE"
+    role="grid">
+</ui-grid>
+
+<alert-box #alertBox [title]="CONSTANTS.DOWNLOAD_MODAL_TITLE" [buttonTitle]="CONSTANTS.DOWNLOAD_MODAL_BTN_TITLE">
+    <!-- Reusing the same grid with different data and default configs in the alert box -->
+    <ui-grid *ngIf="modalData" [columns]="modalColumns" [data]="modalData"
+            [attr.aria-label]="ARIA_CONSTANTS.DOWNLOAD_MODAL" role="grid">
+    </ui-grid>
+</alert-box>

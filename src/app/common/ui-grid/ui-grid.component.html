@@ -1,0 +1,78 @@
+<section class="table-container" aria-labelledby="table-header" [class.noTopBorder]="!showHeader">
+  <!-- Table Header -->
+  <header id="table-header" class="table-header" *ngIf="showHeader">
+    <!-- Header Checkbox for Selecting All Rows -->
+    <input *ngIf="headerCheckboxSelection" type="checkbox"
+           [ngModel]="selectAll"
+           [checked]="isAllSelected()"
+           [indeterminate]="isSomeSelected()"
+           (ngModelChange)="toggleAllSelection()"
+           [attr.aria-label]="ARIA_CONSTANTS.SELECT_ALL_ROWS"
+           tabindex="0" />
+    
+    <!-- Selected Count Label -->
+    <label class="flex" aria-live="polite">{{ selectedCount ? CONSTANTS.SELECTED + selectedCount : CONSTANTS.NONE_SELECTED }}</label>
+    
+    <!-- Download Button for Selected Rows -->
+    <div class="button-wrapper">
+      <button (click)="downloadSelected()"
+              *ngIf="!hideDownload"
+              [disabled]="!selectedCount"
+              class="text-only-button downloadButton"
+              [attr.aria-label]="ARIA_CONSTANTS.DOWNLOAD_SELECTED_ITEMS"
+              tabindex="0">
+        <!-- SVG Icon for Download -->
+        <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" fill="white"/>
+          <path d="M5 12V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V12" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 3L12 15M12 15L16 11M12 15L8 11" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span> {{CONSTANTS.DOWNLOAD_SELECTED}} </span>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Table Content -->
+  <main>
+    <table role="grid">
+      <thead>
+        <tr>
+          <th *ngIf="checkBoxSelection" scope="col"></th>
+          <!-- Table Column Headers -->
+          <th *ngFor="let column of columns" scope="col" [style.width]="column.width" [attr.aria-label]="column.ariaLabel ? column.ariaLabel : null">
+            <ng-container *ngIf="!column.hide">
+              {{column.header}}
+            </ng-container>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data; let i = index; trackBy: trackByIndex" [class.selected]="isSelected(row)" role="row">
+          <!-- Row Selection Checkbox -->
+          <td *ngIf="checkBoxSelection" role="gridcell">
+            <input type="checkbox" [disabled]="isCheckboxDisabled(row)" [checked]="isSelected(row)" (change)="toggleSelection(row)" [attr.aria-label]="ARIA_CONSTANTS.SELECT_ROW + (i + 1)" tabindex="0" />
+          </td>
+          <!-- Row Data Cells -->
+          <td *ngFor="let column of columns" [class]="column.class" role="gridcell">
+            <ng-container *ngIf="!column.hide">
+              <!-- Custom Cell Renderer -->
+              <ng-container *ngIf="column.cellRenderer; else defaultContent">
+                <span [innerHTML]="sanitize(column.cellRenderer(row[column.field], row))"></span>
+              </ng-container>
+              <!-- Default Cell Content -->
+              <ng-template #defaultContent>
+                {{ column.valueRenderer ? column.valueRenderer(row[column.field], row) : row[column.field] | dynamicPipe: column.pipe }}
+              </ng-template>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</section>
+
+<!-- Footer Content -->
+<footer align="right">
+  <!-- Project content if the user want to add any buttons in their own component -->
+  <ng-content></ng-content>
+</footer>
